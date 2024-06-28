@@ -157,6 +157,17 @@
             font-size: 16px;
             color: #555;
         }
+
+        .instructions-link {
+            margin-top: 10px;
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .instructions-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -176,6 +187,7 @@
         <button onclick="copyPassword()">Копирай паролата</button>
         <p>Стабилност на паролата: <span id="passwordStrength"></span></p>
         <div class="timer" id="timer"></div>
+        <a href="instructions.html" class="instructions-link">Как да използвам генератора и да разреша достъп до клипборда?</a>
     </div>
 
     <div id="toast"></div>
@@ -206,7 +218,7 @@
         function generatePassword() {
             checkClipboardPermissions().then(hasPermission => {
                 if (!hasPermission) {
-                    requestClipboardPermissions();
+                    showToast("Трябва да разрешите достъп до клипборда. Моля, вижте инструкциите.");
                     return;
                 }
 
@@ -321,20 +333,6 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
-
-        function requestClipboardPermissions() {
-            navigator.permissions.query({name: 'clipboard-write'}).then(result => {
-                if (result.state !== 'granted') {
-                    showToast("Трябва да разрешите достъп до клипборда за да използвате тази функция.");
-                }
-            });
-
-            navigator.permissions.query({name: 'clipboard-read'}).then(result => {
-                if (result.state !== 'granted') {
-                    showToast("Трябва да разрешите достъп до клипборда за да използвате тази функция.");
-                }
-            });
         }
 
         function startTimer() {
