@@ -152,10 +152,14 @@
             color: black;
         }
 
-        .timer {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #555;
+        .agreement {
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .agreement input {
+            margin-right: 10px;
         }
 
         .instructions-link {
@@ -180,13 +184,16 @@
         <label><input type="checkbox" id="includeUppercase" checked> Главни букви (A-Z)</label>
         <label><input type="checkbox" id="includeNumbers" checked> Цифри (0-9)</label>
         <label><input type="checkbox" id="includeSymbols" checked> Специални символи (!@#$%^&* и т.н.)</label>
+
+        <div class="agreement">
+            <label><input type="checkbox" id="agreeTerms"> Съгласен съм, че не записваме пароли и данни и че не отговаряме, ако паролата бъде разбита или разкрита.</label>
+        </div>
         
         <button onclick="generatePassword()">Генерирай парола</button>
         <p>Генерирана парола:</p>
         <div class="generated-password" id="generatedPassword"></div>
         <button onclick="copyPassword()">Копирай паролата</button>
         <p>Стабилност на паролата: <span id="passwordStrength"></span></p>
-        <div class="timer" id="timer"></div>
         <a href="instructions.html" class="instructions-link">Как да използвам генератора и да разреша достъп до клипборда?</a>
     </div>
 
@@ -203,9 +210,13 @@
     <script>
         let passwordStrengthLevel = 0;
         let confirmedWeakPassword = false;
-        let countdown;
 
         function generatePassword() {
+            if (!document.getElementById('agreeTerms').checked) {
+                showToast("Трябва да се съгласите с условията.");
+                return;
+            }
+
             const length = parseInt(document.getElementById('passwordLength').value, 10);
             if (isNaN(length) || length < 1 || length > 1000) {
                 showToast("Дължината на паролата трябва да е между 1 и 1000 символа.");
@@ -282,7 +293,6 @@
             try {
                 await navigator.clipboard.writeText(password);
                 showToast("Паролата е копирана успешно!");
-                startTimer();
                 confirmedWeakPassword = false;
             } catch (error) {
                 showToast("Трябва да разрешите достъп до клипборда. Моля, вижте инструкциите.");
@@ -317,27 +327,6 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
-
-        function startTimer() {
-            let timeLeft = 60;
-            const timerElement = document.getElementById('timer');
-            timerElement.textContent = `Паролата ще бъде изтрита от клипборда след ${timeLeft} секунди.`;
-
-            clearInterval(countdown);
-            countdown = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    navigator.clipboard.writeText('').then(() => {
-                        timerElement.textContent = 'Паролата беше изтрита от клипборда.';
-                    }, () => {
-                        timerElement.textContent = 'Неуспешно изтриване на паролата от клипборда.';
-                    });
-                } else {
-                    timerElement.textContent = `Паролата ще бъде изтрита от клипборда след ${timeLeft} секунди.`;
-                }
-            }, 1000);
         }
     </script>
 </body>
