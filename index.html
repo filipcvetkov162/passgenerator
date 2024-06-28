@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор на парола</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            overflow: auto;
+            max-height: 90vh;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .strong { color: green; }
+        .medium { color: orange; }
+        .weak { color: red; }
+
+        .generated-password {
+            word-wrap: break-word;
+            max-width: 100%;
+            white-space: pre-wrap;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #ccc;
+            color: black;
+        }
+
+        .timer {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор на парола</h1>
+        <label for="passwordLength">Дължина на паролата:</label>
+        <input type="number" id="passwordLength" value="12" min="1" max="1000">
+        
+        <label><input type="checkbox" id="includeLowercase" checked> Малки букви (a-z)</label>
+        <label><input type="checkbox" id="includeUppercase" checked> Главни букви (A-Z)</label>
+        <label><input type="checkbox" id="includeNumbers" checked> Цифри (0-9)</label>
+        <label><input type="checkbox" id="includeSymbols" checked> Специални символи (!@#$%^&* и т.н.)</label>
+        
+        <button onclick="generatePassword()">Генерирай парола</button>
+        <p>Генерирана парола:</p>
+        <div class="generated-password" id="generatedPassword"></div>
+        <button onclick="copyPassword()">Копирай паролата</button>
+        <p>Стабилност на паролата: <span id="passwordStrength"></span></p>
+        <div class="timer" id="timer"></div>
+    </div>
+
+    <div id="toast"></div>
+
+    <div id="weakPasswordModal" class="modal">
+        <div class="modal-content">
+            <p>Паролата е слаба. Сигурни ли сте, че искате да я копирате?</p>
+            <button class="btn-confirm" onclick="confirmCopy(true)">Да</button>
+            <button class="btn-cancel" onclick="confirmCopy(false)">Не</button>
+        </div>
+    </div>
+
+    <script>
+        let passwordStrengthLevel = 0;
+        let confirmedWeakPassword = false;
+        let countdown;
+
+        function generatePassword() {
+            const length = parseInt(document.getElementById('passwordLength').value, 10);
+            if (isNaN(length) || length < 1 || length > 1000) {
+                showToast("Дължината на паролата трябва да е между 1 и 1000 символа.");
+                return;
+            }
+            
+            const includeLowercase = document.getElementById('includeLowercase').checked;
+            const includeUppercase = document.getElementById('includeUppercase').checked;
+            const includeNumbers = document.getElementById('includeNumbers').checked;
+            const includeSymbols = document.getElementById('includeSymbols').checked;
+
+            let charset = "";
+            if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
+            if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (includeNumbers) charset += "0123456789";
+            if (includeSymbols) charset += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+            if (charset === "") {
+                document.getElementById('generatedPassword').textContent = "Моля, изберете поне една опция.";
+                document.getElementById('passwordStrength').textContent = "";
+                showToast("Моля, изберете поне една опция.");
+                return;
+            }
+
+            let password = "";
+            for (let i = 0, n = charset.length; i < length; ++i) {
+                password += charset.charAt(Math.floor(Math.random() * n));
+            }
+            document.getElementById('generatedPassword').textContent = password;
+            evaluatePasswordStrength(password);
+        }
+
+        function evaluatePasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            if (/[a-z]/.test(password)) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
+
+            passwordStrengthLevel = strength;
+
+            let strengthText = "";
+            let strengthClass = "";
+            if (strength <= 2) {
+                strengthText = "Слаба";
+                strengthClass = "weak";
+            } else if (strength <= 4) {
+                strengthText = "Средна";
+                strengthClass = "medium";
+            } else {
+                strengthText = "Силна";
+                strengthClass = "strong";
+            }
+
+            const strengthElement = document.getElementById('passwordStrength');
+            strengthElement.textContent = strengthText;
+            strengthElement.className = strengthClass;
+        }
+
+        function copyPassword() {
+            const password = document.getElementById('generatedPassword').textContent;
+            if (password === "" || password === "Моля, изберете поне една опция.") {
+                showToast("Няма генерирана парола за копиране.");
+                return;
+            }
+
+            if (passwordStrengthLevel <= 2 && !confirmedWeakPassword) {
+                showModal();
+                return;
+            }
+
+            navigator.clipboard.writeText(password).then(() => {
+                showToast("Паролата е копирана успешно!");
+                startTimer();
+                confirmedWeakPassword = false;
+            }, () => {
+                showToast("Неуспешно копиране на паролата.");
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = "toast show";
+            setTimeout(() => {
+                toast.className = toast.className.replace("show", "");
+            }, 3000);
+        }
+
+        function showModal() {
+            const modal = document.getElementById('weakPasswordModal');
+            modal.style.display = "block";
+        }
+
+        function confirmCopy(confirm) {
+            const modal = document.getElementById('weakPasswordModal');
+            modal.style.display = "none";
+            if (confirm) {
+                confirmedWeakPassword = true;
+                copyPassword();
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('weakPasswordModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function startTimer() {
+            let timeLeft = 60;
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `Паролата ще бъде изтрита от клипборда след ${timeLeft} секунди.`;
+
+            clearInterval(countdown);
+            countdown = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    navigator.clipboard.writeText('').then(() => {
+                        timerElement.textContent = 'Паролата беше изтрита от клипборда.';
+                    }, () => {
+                        timerElement.textContent = 'Неуспешно изтриване на паролата от клипборда.';
+                    });
+                } else {
+                    timerElement.textContent = `Паролата ще бъде изтрита от клипборда след ${timeLeft} секунди.`;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
