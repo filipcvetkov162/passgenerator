@@ -195,9 +195,9 @@
 
         async function checkClipboardPermissions() {
             try {
-                await navigator.permissions.query({name: 'clipboard-write'});
-                await navigator.permissions.query({name: 'clipboard-read'});
-                return true;
+                const writePermission = await navigator.permissions.query({name: 'clipboard-write'});
+                const readPermission = await navigator.permissions.query({name: 'clipboard-read'});
+                return writePermission.state === 'granted' && readPermission.state === 'granted';
             } catch (error) {
                 return false;
             }
@@ -206,7 +206,7 @@
         function generatePassword() {
             checkClipboardPermissions().then(hasPermission => {
                 if (!hasPermission) {
-                    showToast("Вашият браузър не поддържа необходимите функции за работа с клипборда.");
+                    requestClipboardPermissions();
                     return;
                 }
 
@@ -321,6 +321,20 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+
+        function requestClipboardPermissions() {
+            navigator.permissions.query({name: 'clipboard-write'}).then(result => {
+                if (result.state !== 'granted') {
+                    showToast("Трябва да разрешите достъп до клипборда за да използвате тази функция.");
+                }
+            });
+
+            navigator.permissions.query({name: 'clipboard-read'}).then(result => {
+                if (result.state !== 'granted') {
+                    showToast("Трябва да разрешите достъп до клипборда за да използвате тази функция.");
+                }
+            });
         }
 
         function startTimer() {
