@@ -205,54 +205,37 @@
         let confirmedWeakPassword = false;
         let countdown;
 
-        async function checkClipboardPermissions() {
-            try {
-                const writePermission = await navigator.permissions.query({name: 'clipboard-write'});
-                const readPermission = await navigator.permissions.query({name: 'clipboard-read'});
-                return writePermission.state === 'granted' && readPermission.state === 'granted';
-            } catch (error) {
-                return false;
-            }
-        }
-
         function generatePassword() {
-            checkClipboardPermissions().then(hasPermission => {
-                if (!hasPermission) {
-                    showToast("Трябва да разрешите достъп до клипборда. Моля, вижте инструкциите.");
-                    return;
-                }
+            const length = parseInt(document.getElementById('passwordLength').value, 10);
+            if (isNaN(length) || length < 1 || length > 1000) {
+                showToast("Дължината на паролата трябва да е между 1 и 1000 символа.");
+                return;
+            }
+            
+            const includeLowercase = document.getElementById('includeLowercase').checked;
+            const includeUppercase = document.getElementById('includeUppercase').checked;
+            const includeNumbers = document.getElementById('includeNumbers').checked;
+            const includeSymbols = document.getElementById('includeSymbols').checked;
 
-                const length = parseInt(document.getElementById('passwordLength').value, 10);
-                if (isNaN(length) || length < 1 || length > 1000) {
-                    showToast("Дължината на паролата трябва да е между 1 и 1000 символа.");
-                    return;
-                }
-                
-                const includeLowercase = document.getElementById('includeLowercase').checked;
-                const includeUppercase = document.getElementById('includeUppercase').checked;
-                const includeNumbers = document.getElementById('includeNumbers').checked;
-                const includeSymbols = document.getElementById('includeSymbols').checked;
+            let charset = "";
+            if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
+            if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (includeNumbers) charset += "0123456789";
+            if (includeSymbols) charset += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
 
-                let charset = "";
-                if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
-                if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                if (includeNumbers) charset += "0123456789";
-                if (includeSymbols) charset += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            if (charset === "") {
+                document.getElementById('generatedPassword').textContent = "Моля, изберете поне една опция.";
+                document.getElementById('passwordStrength').textContent = "";
+                showToast("Моля, изберете поне една опция.");
+                return;
+            }
 
-                if (charset === "") {
-                    document.getElementById('generatedPassword').textContent = "Моля, изберете поне една опция.";
-                    document.getElementById('passwordStrength').textContent = "";
-                    showToast("Моля, изберете поне една опция.");
-                    return;
-                }
-
-                let password = "";
-                for (let i = 0, n = charset.length; i < length; ++i) {
-                    password += charset.charAt(Math.floor(Math.random() * n));
-                }
-                document.getElementById('generatedPassword').textContent = password;
-                evaluatePasswordStrength(password);
-            });
+            let password = "";
+            for (let i = 0, n = charset.length; i < length; ++i) {
+                password += charset.charAt(Math.floor(Math.random() * n));
+            }
+            document.getElementById('generatedPassword').textContent = password;
+            evaluatePasswordStrength(password);
         }
 
         function evaluatePasswordStrength(password) {
@@ -284,7 +267,7 @@
             strengthElement.className = strengthClass;
         }
 
-        function copyPassword() {
+        async function copyPassword() {
             const password = document.getElementById('generatedPassword').textContent;
             if (password === "" || password === "Моля, изберете поне една опция.") {
                 showToast("Няма генерирана парола за копиране.");
@@ -296,13 +279,15 @@
                 return;
             }
 
-            navigator.clipboard.writeText(password).then(() => {
+            try {
+                await navigator.permissions.query({name: 'clipboard-write'});
+                await navigator.clipboard.writeText(password);
                 showToast("Паролата е копирана успешно!");
                 startTimer();
                 confirmedWeakPassword = false;
-            }, () => {
-                showToast("Неуспешно копиране на паролата.");
-            });
+            } catch (error) {
+                showToast("Трябва да разрешите достъп до клипборда. Моля, вижте инструкциите.");
+            }
         }
 
         function showToast(message) {
