@@ -1,6 +1,27 @@
-# passgenerator
+# Password Generator - pass.fc162.eu
 
-## License
+This project is a secure password generator tool. Key features include:
+
+    Password Length: Allows users to set the length of the password.
+    Password Components: Options to include lowercase letters, uppercase letters, numbers, and special symbols.
+    Strength Assessment: Tool to evaluate the security of the generated password.
+    No Storage: Generated passwords are not stored or logged.
+    User Responsibility: Users are responsible for maintaining the security of their passwords.
+
+## Usage
+
+    Choose the desired password length.
+    Select the characters to include.
+    Click "Generate".
+    Copy the generated password.
+
+## Technologies
+
+    HTML
+    CSS
+    JavaScript
+
+# License
 Copyright 2024 Filip Tsvetkov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to use the Software, subject to the following conditions:
