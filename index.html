@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор на парола</title>
+    <link rel="icon" type="image/gif" href="logo.gif">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,71 +17,122 @@
         }
 
         .container {
-            background: #fff;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 90%;
             max-width: 400px;
             overflow: auto;
             max-height: 90vh;
+            color: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         h1 {
-            color: #333;
-            font-size: 24px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            margin: 10px 0;
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
         }
 
-        input[type="number"] {
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input[type="number"] {
             width: 100%;
-            padding: 8px;
-            margin: 10px 0;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-inline {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-inline label {
+            flex: 1;
+        }
+
+        .form-inline input[type="number"] {
+            width: 60px;
+            margin-left: 10px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             color: #fff;
-            background-color: #007bff;
+            background-color: #2575fc;
             border: none;
-            border-radius: 4px;
+            border-radius: 24px;
             cursor: pointer;
-            margin: 10px 0;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #6a11cb;
         }
-
-        .strong { color: green; }
-        .medium { color: orange; }
-        .weak { color: red; }
 
         .generated-password {
             word-wrap: break-word;
             max-width: 100%;
             white-space: pre-wrap;
-            background-color: #f0f0f0;
+            background-color: #fff;
+            color: #333;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-top: 10px;
             max-height: 200px;
             overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         .toast {
             visibility: hidden;
             min-width: 250px;
-            margin-left: -125px;
             background-color: #333;
             color: #fff;
             text-align: center;
@@ -91,11 +143,12 @@
             left: 50%;
             bottom: 30px;
             font-size: 17px;
+            transform: translateX(-50%);
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
         }
 
         .toast.show {
             visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
         }
 
         @keyframes fadein {
@@ -118,6 +171,12 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0,0,0,0.4);
+            animation: modalFadeIn 0.5s;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
         }
 
         .modal-content {
@@ -126,30 +185,51 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 300px;
-            border-radius: 8px;
+            max-width: 400px;
+            border-radius: 12px;
             text-align: center;
+            animation: modalContentFadeIn 0.5s;
+        }
+
+        @keyframes modalContentFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
         }
 
         .modal-content p {
             margin-bottom: 20px;
+            font-weight: 500;
         }
 
         .modal-content button {
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 24px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
         .btn-confirm {
-            background-color: #007bff;
+            background-color: #2575fc;
             color: white;
+        }
+
+        .btn-confirm:hover {
+            background-color: #6a11cb;
         }
 
         .btn-cancel {
             background-color: #ccc;
             color: black;
+        }
+
+        .btn-cancel:hover {
+            background-color: #999;
         }
 
         .agreement {
@@ -165,35 +245,82 @@
         .instructions-link {
             margin-top: 10px;
             display: block;
-            color: #007bff;
+            color: #fff;
             text-decoration: none;
+            font-weight: 500;
         }
 
         .instructions-link:hover {
             text-decoration: underline;
         }
+
+        .password-strength {
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.5s ease;
+        }
+
+        .password-strength.weak {
+            color: red;
+        }
+
+        .password-strength.medium {
+            color: orange;
+        }
+
+        .password-strength.strong {
+            color: green;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <img src="logo.gif" alt="Logo" class="logo">
         <h1>Генератор на парола</h1>
-        <label for="passwordLength">Дължина на паролата:</label>
-        <input type="number" id="passwordLength" value="12" min="1" max="1000">
-        
-        <label><input type="checkbox" id="includeLowercase" checked> Малки букви (a-z)</label>
-        <label><input type="checkbox" id="includeUppercase" checked> Главни букви (A-Z)</label>
-        <label><input type="checkbox" id="includeNumbers" checked> Цифри (0-9)</label>
-        <label><input type="checkbox" id="includeSymbols" checked> Специални символи (!@#$%^&* и т.н.)</label>
+        <div class="form-group">
+            <label for="passwordLength">Обща дължина на паролата:</label>
+            <input type="number" id="passwordLength" value="12" min="1" max="1000">
+        </div>
+
+        <div class="form-group">
+            <label><input type="checkbox" id="autoDistribute" checked onchange="toggleInputs()"> Автоматично разпределение на знаците</label>
+        </div>
+
+        <div class="form-group">
+            <label><input type="checkbox" id="includeLowercase" checked> Малки букви (a-z)</label>
+            <label><input type="checkbox" id="includeUppercase" checked> Главни букви (A-Z)</label>
+            <label><input type="checkbox" id="includeNumbers" checked> Цифри (0-9)</label>
+            <label><input type="checkbox" id="includeSymbols" checked> Специални символи (!@#$%^&*)</label>
+        </div>
+
+        <div class="form-group">
+            <div class="form-inline">
+                <label for="lowercaseCount">Малки букви (a-z):</label>
+                <input type="number" id="lowercaseCount" value="0" min="0">
+            </div>
+            <div class="form-inline">
+                <label for="uppercaseCount">Главни букви (A-Z):</label>
+                <input type="number" id="uppercaseCount" value="0" min="0">
+            </div>
+            <div class="form-inline">
+                <label for="numbersCount">Цифри (0-9):</label>
+                <input type="number" id="numbersCount" value="0" min="0">
+            </div>
+            <div class="form-inline">
+                <label for="symbolsCount">Специални символи (!@#$%^&*):</label>
+                <input type="number" id="symbolsCount" value="0" min="0">
+            </div>
+        </div>
 
         <div class="agreement">
-            <label><input type="checkbox" id="agreeTerms"> Съгласен съм, че не записваме пароли и данни и че не отговаряме, ако паролата бъде разбита или разкрита.</label>
+            <label><input type="checkbox" id="agreeTerms"> Условия за ползване на генератора на пароли</label>
         </div>
         
         <button onclick="generatePassword()">Генерирай парола</button>
         <p>Генерирана парола:</p>
         <div class="generated-password" id="generatedPassword"></div>
         <button onclick="copyPassword()">Копирай паролата</button>
-        <p>Стабилност на паролата: <span id="passwordStrength"></span></p>
+        <p>Стабилност на паролата: <span id="passwordStrength" class="password-strength"></span></p>
         <a href="instructions.html" class="instructions-link">Как да използвам генератора и да разреша достъп до клипборда?</a>
     </div>
 
@@ -207,9 +334,34 @@
         </div>
     </div>
 
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <h2>Условия за ползване на генератора на пароли</h2>
+            <p>При използването на този генератор на пароли, Вие се съгласявате със следните условия:</p>
+            <p><strong>Конфиденциалност и съхранение на данни:</strong> Ние не съхраняваме и не записваме генерираните от Вас пароли и лични данни. Всяка парола, генерирана с помощта на нашия инструмент, е Ваша отговорност да запазите и съхраните на сигурно място.</p>
+            <p><strong>Отговорност при разбиване или разкриване на пароли:</strong> Ние не носим отговорност за последствията, произтичащи от разбиване или разкриване на генерираните пароли. Ползвателят на генератора е изцяло отговорен за сигурността и конфиденциалността на своите пароли.</p>
+            <p><strong>Политика за отказ от отговорност:</strong> Генераторът на пароли се предоставя "такъв какъвто е" без никакви гаранции, изрични или подразбиращи се. Ние не гарантираме, че генерираните пароли ще бъдат напълно защитени от хакерски атаки или други несанкционирани действия.</p>
+            <button class="btn-confirm" onclick="acceptTerms()">Приемам</button>
+        </div>
+    </div>
+
     <script>
         let passwordStrengthLevel = 0;
         let confirmedWeakPassword = false;
+
+        document.getElementById('agreeTerms').addEventListener('change', function() {
+            if (this.checked) {
+                showTermsModal();
+            }
+        });
+
+        function toggleInputs() {
+            const autoDistribute = document.getElementById('autoDistribute').checked;
+            document.getElementById('lowercaseCount').disabled = autoDistribute;
+            document.getElementById('uppercaseCount').disabled = autoDistribute;
+            document.getElementById('numbersCount').disabled = autoDistribute;
+            document.getElementById('symbolsCount').disabled = autoDistribute;
+        }
 
         function generatePassword() {
             if (!document.getElementById('agreeTerms').checked) {
@@ -222,29 +374,70 @@
                 showToast("Дължината на паролата трябва да е между 1 и 1000 символа.");
                 return;
             }
-            
+
+            const autoDistribute = document.getElementById('autoDistribute').checked;
             const includeLowercase = document.getElementById('includeLowercase').checked;
             const includeUppercase = document.getElementById('includeUppercase').checked;
             const includeNumbers = document.getElementById('includeNumbers').checked;
             const includeSymbols = document.getElementById('includeSymbols').checked;
 
-            let charset = "";
-            if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
-            if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            if (includeNumbers) charset += "0123456789";
-            if (includeSymbols) charset += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            const lowercaseCount = parseInt(document.getElementById('lowercaseCount').value, 10);
+            const uppercaseCount = parseInt(document.getElementById('uppercaseCount').value, 10);
+            const numbersCount = parseInt(document.getElementById('numbersCount').value, 10);
+            const symbolsCount = parseInt(document.getElementById('symbolsCount').value, 10);
 
-            if (charset === "") {
-                document.getElementById('generatedPassword').textContent = "Моля, изберете поне една опция.";
-                document.getElementById('passwordStrength').textContent = "";
-                showToast("Моля, изберете поне една опция.");
+            if (!autoDistribute && (lowercaseCount + uppercaseCount + numbersCount + symbolsCount > length)) {
+                showToast("Сумата на всички типове знаци трябва да е по-малка или равна на общата дължина на паролата.");
                 return;
             }
 
+            let charset = "";
             let password = "";
-            for (let i = 0, n = charset.length; i < length; ++i) {
-                password += charset.charAt(Math.floor(Math.random() * n));
+
+            if (autoDistribute) {
+                if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
+                if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                if (includeNumbers) charset += "0123456789";
+                if (includeSymbols) charset += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+                for (let i = 0; i < length; i++) {
+                    password += charset.charAt(Math.floor(Math.random() * charset.length));
+                }
+            } else {
+                let tempPassword = "";
+
+                if (includeLowercase) {
+                    for (let i = 0; i < lowercaseCount; i++) {
+                        tempPassword += "abcdefghijklmnopqrstuvwxyz".charAt(Math.floor(Math.random() * 26));
+                    }
+                }
+                if (includeUppercase) {
+                    for (let i = 0; i < uppercaseCount; i++) {
+                        tempPassword += "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.floor(Math.random() * 26));
+                    }
+                }
+                if (includeNumbers) {
+                    for (let i = 0; i < numbersCount; i++) {
+                        tempPassword += "0123456789".charAt(Math.floor(Math.random() * 10));
+                    }
+                }
+                if (includeSymbols) {
+                    for (let i = 0; i < symbolsCount; i++) {
+                        tempPassword += "!@#$%^&*()_+~`|}{[]:;?><,./-=".charAt(Math.floor(Math.random() * 29));
+                    }
+                }
+
+                password = tempPassword.split('').sort(() => 0.5 - Math.random()).join('');
+                if (password.length < length) {
+                    const remainingLength = length - password.length;
+                    charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+                    for (let i = 0; i < remainingLength; i++) {
+                        password += charset.charAt(Math.floor(Math.random() * charset.length));
+                    }
+                    password = password.split('').sort(() => 0.5 - Math.random()).join('');
+                }
             }
+
             document.getElementById('generatedPassword').textContent = password;
             evaluatePasswordStrength(password);
         }
@@ -275,7 +468,7 @@
 
             const strengthElement = document.getElementById('passwordStrength');
             strengthElement.textContent = strengthText;
-            strengthElement.className = strengthClass;
+            strengthElement.className = `password-strength ${strengthClass}`;
         }
 
         async function copyPassword() {
@@ -322,12 +515,28 @@
             }
         }
 
+        function showTermsModal() {
+            const modal = document.getElementById('termsModal');
+            modal.style.display = "block";
+        }
+
+        function acceptTerms() {
+            const modal = document.getElementById('termsModal');
+            modal.style.display = "none";
+            document.getElementById('agreeTerms').checked = true;
+        }
+
         window.onclick = function(event) {
-            const modal = document.getElementById('weakPasswordModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
+            const weakPasswordModal = document.getElementById('weakPasswordModal');
+            const termsModal = document.getElementById('termsModal');
+            if (event.target == weakPasswordModal) {
+                weakPasswordModal.style.display = "none";
+            } else if (event.target == termsModal) {
+                termsModal.style.display = "none";
             }
         }
+
+        toggleInputs();
     </script>
 </body>
 </html>

@@ -3,66 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Инструкции за Генератор на Парола</title>
+    <title>Инструкции за използване на генератора на пароли</title>
+    <link rel="icon" type="image/gif" href="logo.gif">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             background-color: #f0f0f0;
+            margin: 0;
         }
 
         .container {
-            background: #fff;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: 90%;
+            max-width: 600px;
+            overflow: auto;
+            max-height: 90vh;
+            color: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         h1 {
-            color: #333;
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         p {
-            margin: 10px 0;
-            line-height: 1.6;
+            font-size: 16px;
+            margin-bottom: 15px;
+            line-height: 1.5;
         }
 
         ul {
-            margin: 10px 0;
-            padding-left: 20px;
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
         }
 
         a {
-            color: #007bff;
-            text-decoration: none;
+            color: #fff;
+            text-decoration: underline;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 15px;
         }
 
         a:hover {
+            text-decoration: none;
+        }
+
+        .instructions-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .instructions-link:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Инструкции за Генератор на Парола</h1>
-        <p>Генераторът на пароли ви позволява да създавате сигурни и сложни пароли. Следвайте стъпките по-долу, за да използвате генератора правилно.</p>
-
-        <h2>Как да използвате генератора</h2>
+        <img src="logo.gif" alt="Logo" class="logo">
+        <h1>Инструкции за използване на генератора на пароли</h1>
+        <p>Генераторът на пароли ви позволява да създадете силни и сигурни пароли с различни опции за персонализиране. Следвайте стъпките по-долу, за да използвате генератора:</p>
+        
         <ul>
-            <li>Изберете желаната дължина на паролата, като използвате полето за въвеждане "Дължина на паролата".</li>
-            <li>Изберете опциите за включване на малки букви, главни букви, цифри и специални символи.</li>
-            <li>Сложете отметка на полето "Съгласен съм, че не записваме пароли и данни и че не отговаряме, ако паролата бъде разбита или разкрита."</li>
-            <li>Натиснете бутона "Генерирай парола".</li>
-            <li>Генерираната парола ще се появи в полето под бутона.</li>
-            <li>Можете да копирате паролата, като натиснете бутона "Копирай паролата".</li>
+            <li><strong>Обща дължина на паролата:</strong> Изберете дължината на паролата, която искате да генерирате, като използвате полето за въвеждане.</li>
+            <li><strong>Автоматично разпределение на знаците:</strong> Ако тази опция е избрана, генераторът автоматично ще разпредели избраните малки букви, главни букви, цифри и специални символи в паролата.</li>
+            <li><strong>Персонализирано разпределение на знаците:</strong> Ако не искате автоматично разпределение, махнете отметката и задайте броя на знаците за всеки тип (малки букви, главни букви, цифри и специални символи). Потребителят няма да може да въвежда числа в тези полета, докато опцията за автоматично разпределение е активна.</li>
+            <li><strong>Избор на символи:</strong> Изберете с чекбоксове дали да включите малки букви, главни букви, цифри и специални символи в паролата.</li>
+            <li><strong>Условия за ползване:</strong> Поставете отметка на "Условия за ползване на генератора на пароли", за да потвърдите, че сте съгласни с условията.</li>
+            <li><strong>Генерирайте парола:</strong> Натиснете бутона "Генерирай парола", за да създадете паролата. Тя ще се появи в полето под бутона.</li>
+            <li><strong>Копиране на паролата:</strong> Натиснете бутона "Копирай паролата", за да копирате генерираната парола в клипборда.</li>
         </ul>
 
-        <p><a href="index.html">Назад към генератора на пароли</a></p>
+        <p>При копиране на паролата, ако тя е маркирана като "Слаба", ще получите предупредително съобщение и ще трябва да потвърдите копирането.</p>
+        
+        <p>Ако срещнете проблеми с достъпа до клипборда, моля, уверете се, че браузърът ви има необходимите разрешения за достъп до клипборда.</p>
+        
+        <a href="index.html" class="instructions-link">Върнете се към генератора на пароли</a>
     </div>
 </body>
 </html>
